@@ -4,7 +4,7 @@
 //! import, namespace, def, theorem, etc.
 
 use lean_kernel::{environment::Environment, module::Import, Expr, Level, Name};
-use lean_syn_expr::{Syntax, SyntaxKind};
+use lean_syn_expr::{Syntax, SyntaxKind, SyntaxNode};
 use smallvec::smallvec;
 use std::collections::HashMap;
 

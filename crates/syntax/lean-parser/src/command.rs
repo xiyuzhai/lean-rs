@@ -1,4 +1,4 @@
-use lean_syn_expr::{Syntax, SyntaxKind};
+use lean_syn_expr::{Syntax, SyntaxKind, SyntaxNode};
 use smallvec::smallvec;
 
 use crate::{
@@ -33,9 +33,6 @@ impl<'a> Parser<'a> {
         // Parse name
         let name = self.identifier()?;
         self.skip_whitespace();
-        
-        // Restore the original trivia before creating the node
-        self.restore_leading_trivia(saved_trivia);
 
         // Parse optional type parameters
         let mut params = Vec::new();
@@ -87,7 +84,13 @@ impl<'a> Parser<'a> {
         }
         children.push(value);
 
-        Ok(self.create_node(SyntaxKind::Def, range, children))
+        // Restore the original trivia before creating the node
+        self.restore_leading_trivia(saved_trivia);
+        
+        // Don't use create_node here because we're manually handling trivia
+        let mut node = lean_syn_expr::SyntaxNode::new(SyntaxKind::Def, range, children);
+        node.leading_trivia = self.take_leading_trivia();
+        Ok(Syntax::Node(Box::new(node)))
     }
 
     /// Parse theorem command: `theorem name [params] : type := proof`

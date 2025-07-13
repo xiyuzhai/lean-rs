@@ -396,7 +396,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Take the currently collected leading trivia and reset the collection
-    fn take_leading_trivia(&mut self) -> Vec<Trivia> {
+    pub(crate) fn take_leading_trivia(&mut self) -> Vec<Trivia> {
         std::mem::take(&mut self.leading_trivia)
     }
     
@@ -577,10 +577,7 @@ impl<'a> Parser<'a> {
         };
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-            range,
-            eterned::BaseCoword::new(num),
-        )))
+        Ok(self.create_atom(range, eterned::BaseCoword::new(num)))
     }
 
     fn parse_decimal_number(&mut self) -> String {
@@ -665,10 +662,7 @@ impl<'a> Parser<'a> {
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-            range,
-            eterned::BaseCoword::new(content),
-        )))
+        Ok(self.create_atom(range, eterned::BaseCoword::new(content)))
     }
 
     pub fn char_literal(&mut self) -> ParserResult<Syntax> {
@@ -723,10 +717,7 @@ impl<'a> Parser<'a> {
         self.expect_char('\'')?;
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-            range,
-            eterned::BaseCoword::new(ch.to_string()),
-        )))
+        Ok(self.create_atom(range, eterned::BaseCoword::new(ch.to_string())))
     }
 
     pub fn raw_string_literal(&mut self) -> ParserResult<Syntax> {
@@ -790,10 +781,7 @@ impl<'a> Parser<'a> {
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-            range,
-            eterned::BaseCoword::new(content),
-        )))
+        Ok(self.create_atom(range, eterned::BaseCoword::new(content)))
     }
 
     pub fn interpolated_string_literal(&mut self) -> ParserResult<Syntax> {
@@ -814,10 +802,7 @@ impl<'a> Parser<'a> {
                     self.advance();
                     if !current_str.is_empty() {
                         let range = self.input().range_from(start);
-                        parts.push(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                            range,
-                            eterned::BaseCoword::new(current_str),
-                        )));
+                        parts.push(self.create_atom(range, eterned::BaseCoword::new(current_str)));
                     }
                     break;
                 }
@@ -825,10 +810,7 @@ impl<'a> Parser<'a> {
                     // Save current string part if any
                     if !current_str.is_empty() {
                         let range = self.input().range_from(start);
-                        parts.push(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                            range,
-                            eterned::BaseCoword::new(current_str.clone()),
-                        )));
+                        parts.push(self.create_atom(range, eterned::BaseCoword::new(current_str.clone())));
                         current_str.clear();
                     }
 
@@ -889,11 +871,11 @@ impl<'a> Parser<'a> {
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(lean_syn_expr::SyntaxNode::new(
+        Ok(self.create_node(
             lean_syn_expr::SyntaxKind::StringInterpolation,
             range,
             parts.into(),
-        ))))
+        ))
     }
 
     pub fn peek_raw_string(&self) -> bool {
@@ -958,11 +940,11 @@ impl<'a> Parser<'a> {
                     self.expect_char(close_delim)?;
 
                     let range = self.input().range_from(start);
-                    Ok(Syntax::Node(Box::new(lean_syn_expr::SyntaxNode::new(
+                    Ok(self.create_node(
                         binder_kind,
                         range,
                         vec![first_id, ty].into(),
-                    ))))
+                    ))
                 } else {
                     // This might be [Monad m] where "Monad m" is the full term
                     // Restore and parse as a term
@@ -972,11 +954,11 @@ impl<'a> Parser<'a> {
                     self.expect_char(close_delim)?;
 
                     let range = self.input().range_from(start);
-                    Ok(Syntax::Node(Box::new(lean_syn_expr::SyntaxNode::new(
+                    Ok(self.create_node(
                         binder_kind,
                         range,
                         vec![term].into(),
-                    ))))
+                    ))
                 }
             } else {
                 // Empty brackets or starts with non-identifier
@@ -1013,11 +995,11 @@ impl<'a> Parser<'a> {
                 children.push(t);
             }
 
-            Ok(Syntax::Node(Box::new(lean_syn_expr::SyntaxNode::new(
+            Ok(self.create_node(
                 binder_kind,
                 range,
                 children.into(),
-            ))))
+            ))
         }
     }
 }

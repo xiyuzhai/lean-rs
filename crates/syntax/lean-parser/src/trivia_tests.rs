@@ -125,7 +125,7 @@ fn test_trivia_in_expressions() {
 
     let result = parser.def_command().unwrap();
 
-    if let Syntax::Node(node) = result {
+    if let Syntax::Node(node) = &result {
         assert!(
             !node.leading_trivia.is_empty(),
             "Node should have leading trivia"

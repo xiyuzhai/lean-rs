@@ -2,7 +2,7 @@
 //!
 //! This module handles parsing of attributes (@[attr], @[attr value], etc.)
 
-use lean_syn_expr::{Syntax, SyntaxKind, SyntaxNode};
+use lean_syn_expr::{Syntax, SyntaxKind};
 use smallvec::{smallvec, SmallVec};
 
 use crate::{
@@ -40,11 +40,11 @@ impl<'a> Parser<'a> {
         self.expect_char(']')?;
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::AttributeList,
             range,
             attributes,
-        ))))
+        ))
     }
 
     /// Parse a single attribute: `attr` or `attr value` or `attr := value`
@@ -68,11 +68,11 @@ impl<'a> Parser<'a> {
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::Attribute,
             range,
             children,
-        ))))
+        ))
     }
 
     /// Parse attribute value (can be identifier, string, number, or

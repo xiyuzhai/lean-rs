@@ -3,7 +3,7 @@
 //! This module provides strategies for recovering from parse errors to continue
 //! parsing and provide better error messages.
 
-use lean_syn_expr::{SourceRange, Syntax, SyntaxKind, SyntaxNode};
+use lean_syn_expr::{SourceRange, Syntax, SyntaxKind};
 use smallvec::smallvec;
 
 use crate::{
@@ -76,11 +76,11 @@ impl<'a> Parser<'a> {
 
         // Create an error node containing the skipped content
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::Error,
             range,
             smallvec![],
-        ))))
+        ))
     }
 
     /// Skip until we find a matching delimiter
@@ -115,11 +115,11 @@ impl<'a> Parser<'a> {
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::Error,
             range,
             smallvec![],
-        ))))
+        ))
     }
 
     /// Skip until we find one of the specified tokens
@@ -130,22 +130,22 @@ impl<'a> Parser<'a> {
             for token in tokens {
                 if self.peek_keyword(token) {
                     let range = self.input().range_from(start);
-                    return Ok(Syntax::Node(Box::new(SyntaxNode::new(
+                    return Ok(self.create_node(
                         SyntaxKind::Error,
                         range,
                         smallvec![],
-                    ))));
+                    ));
                 }
             }
             self.advance();
         }
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::Error,
             range,
             smallvec![],
-        ))))
+        ))
     }
 
     /// Insert a missing token and create a synthetic node
@@ -157,10 +157,10 @@ impl<'a> Parser<'a> {
         };
 
         // Create a synthetic atom for the missing token
-        Ok(Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
+        Ok(self.create_atom(
             range,
             eterned::BaseCoword::new(token),
-        )))
+        ))
     }
 
     /// Try an alternative parse when the primary one fails
