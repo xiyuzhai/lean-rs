@@ -373,10 +373,81 @@ impl Elaborator {
 
     /// Elaborate inductive command
     fn elab_inductive(&mut self, node: &lean_syn_expr::SyntaxNode) -> Result<(), ElabError> {
-        // TODO: Implement inductive type elaboration
-        Err(ElabError::UnsupportedFeature(
-            "inductive elaboration not yet implemented".to_string(),
-        ))
+        use crate::inductive::{InductiveType, Constructor, add_inductive_to_env};
+
+        if node.children.is_empty() {
+            return Err(ElabError::InvalidSyntax(
+                "Inductive requires at least a name".to_string(),
+            ));
+        }
+
+        // Parse the inductive type name
+        let name_syntax = &node.children[0];
+        let inductive_name = self.parse_name(name_syntax)?;
+
+        // Make the name absolute in the current namespace
+        let full_name = Name::join_relative(self.state().ns_ctx.current_namespace(), &inductive_name);
+
+        // Parse optional type parameters and indices
+        let mut params = Vec::new();
+        let mut param_idx = 1;
+
+        // Skip parameters for now - parse the type annotation if present
+        while param_idx < node.children.len() {
+            if let Syntax::Atom(atom) = &node.children[param_idx] {
+                if atom.value.as_str() == ":" {
+                    break;
+                }
+            }
+            param_idx += 1;
+        }
+
+        // Parse the inductive type if specified
+        let inductive_type = if param_idx < node.children.len() 
+            && param_idx + 1 < node.children.len() {
+            // Skip the ':' and parse the type
+            param_idx += 1;
+            self.elaborate(&node.children[param_idx])?
+        } else {
+            // Default to Type if no type specified
+            Expr::sort(Level::zero())
+        };
+
+        // Find constructors in the parsed syntax
+        let mut constructors = Vec::new();
+        
+        // Look for constructor nodes in the children
+        for child in &node.children {
+            if let Syntax::Node(constructor_node) = child {
+                if constructor_node.kind == SyntaxKind::Constructor {
+                    if let Ok(constructor) = self.parse_constructor(child, &full_name) {
+                        constructors.push(constructor);
+                    }
+                }
+            }
+        }
+
+        // Create the inductive type
+        let inductive = InductiveType {
+            name: full_name.clone(),
+            universe_params: vec![], // TODO: Parse universe parameters
+            params: params,
+            indices: vec![], // TODO: Parse indices
+            ty: inductive_type,
+            constructors,
+        };
+
+        // Add to environment
+        let state = self.state_mut();
+        if let Some(mut env) = state.env.take() {
+            add_inductive_to_env(&mut env, inductive, state)?;
+            state.env = Some(env);
+            
+            // Add to exports if public
+            state.ns_ctx.add_export(full_name);
+        }
+
+        Ok(())
     }
 
     /// Parse a name from syntax
@@ -475,6 +546,56 @@ impl Elaborator {
         }
     }
     
+    /// Parse a constructor from syntax
+    fn parse_constructor(&mut self, syntax: &Syntax, inductive_name: &Name) -> Result<crate::inductive::Constructor, ElabError> {
+
+        match syntax {
+            Syntax::Node(node) if node.kind == SyntaxKind::Constructor => {
+                if node.children.is_empty() {
+                    return Err(ElabError::InvalidSyntax(
+                        "Constructor requires a name".to_string(),
+                    ));
+                }
+
+                // Parse constructor name
+                let ctor_name = self.parse_name(&node.children[0])?;
+                let full_ctor_name = Name::str(inductive_name.clone(), ctor_name.to_string());
+
+                // Parse optional type annotation
+                let ctor_type = if node.children.len() > 1 {
+                    // Check if the second child is the type (e.g., for "succ : MyNat → MyNat")
+                    let type_expr = &node.children[1];
+                    self.elaborate(type_expr)?
+                } else {
+                    // Constructor with no arguments - just returns the inductive type
+                    Expr::const_expr(inductive_name.clone(), vec![])
+                };
+
+                // Calculate arity (number of parameters)
+                let arity = self.count_constructor_arity(&ctor_type);
+
+                Ok(crate::inductive::Constructor {
+                    name: full_ctor_name,
+                    ty: ctor_type,
+                    arity,
+                })
+            }
+            _ => Err(ElabError::InvalidSyntax(
+                "Expected constructor syntax".to_string(),
+            )),
+        }
+    }
+
+    /// Count the number of parameters in a constructor type
+    fn count_constructor_arity(&self, ty: &Expr) -> usize {
+        match &ty.kind {
+            lean_kernel::expr::ExprKind::Forall(_, _, body, _) => {
+                1 + self.count_constructor_arity(body)
+            }
+            _ => 0,
+        }
+    }
+
     /// Parse a renaming list: (x → y, a → b)
     fn parse_renaming_list(&self, syntax: &Syntax) -> Result<HashMap<Name, Name>, ElabError> {
         match syntax {
@@ -744,5 +865,34 @@ mod tests {
         assert!(resolved
             .iter()
             .any(|r| r.name == Name::str(Name::mk_simple("Std"), "List")));
+    }
+
+    #[test]
+    fn test_inductive_elaboration() {
+        let mut elaborator = Elaborator::new();
+        elaborator.state_mut().set_env(init_basic_environment());
+
+        // Create a simple inductive type syntax: inductive MyNat where | zero | succ : MyNat → MyNat
+        let inductive_text = "inductive MyNat where | zero | succ : MyNat → MyNat";
+        let mut parser = ExpandingParser::new(inductive_text);
+        let module = parser.parse_module().expect("Failed to parse module");
+        
+        // Extract the first command from the module
+        let syntax = match &module {
+            Syntax::Node(node) if node.kind == SyntaxKind::Module => {
+                node.children.first().expect("Module should have inductive command")
+            }
+            _ => panic!("Expected module syntax")
+        };
+
+        let result = elaborator.elaborate_command(&syntax);
+        assert!(result.is_ok(), "Inductive elaboration should succeed: {:?}", result);
+
+        // Check that the inductive type was added to the environment
+        if let Some(env) = &elaborator.state().env {
+            assert!(env.contains(&Name::mk_simple("MyNat")), "MyNat should be in environment");
+            assert!(env.contains(&Name::str(Name::mk_simple("MyNat"), "zero")), "MyNat.zero should be in environment");
+            assert!(env.contains(&Name::str(Name::mk_simple("MyNat"), "succ")), "MyNat.succ should be in environment");
+        }
     }
 }
