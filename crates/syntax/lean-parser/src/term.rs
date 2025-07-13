@@ -18,6 +18,9 @@ impl<'a> Parser<'a> {
     /// Parse a term with precedence (Pratt parsing)
     pub fn term_with_precedence(&mut self, min_prec: Precedence) -> ParserResult<Syntax> {
         let start = self.position();
+        
+        // Collect leading trivia
+        self.skip_whitespace();
 
         // Parse prefix operator or primary expression
         let mut left = self.prefix_term()?;
@@ -64,7 +67,8 @@ impl<'a> Parser<'a> {
 
                 // Create binary operation node
                 let range = self.input().range_from(start);
-                left = Syntax::Node(Box::new(SyntaxNode::new(
+                let op_atom = self.create_atom(op_range, eterned::BaseCoword::new(op_str.clone()));
+                left = self.create_node(
                     match op_str.as_str() {
                         "->" | "→" => SyntaxKind::Arrow,
                         _ => SyntaxKind::BinOp,
@@ -72,13 +76,10 @@ impl<'a> Parser<'a> {
                     range,
                     smallvec![
                         left,
-                        Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                            op_range,
-                            eterned::BaseCoword::new(op_str),
-                        )),
+                        op_atom,
                         right
                     ],
-                )));
+                );
             } else {
                 break;
             }
@@ -110,17 +111,15 @@ impl<'a> Parser<'a> {
             let operand = self.prefix_term()?;
 
             let range = self.input().range_from(start);
-            Ok(Syntax::Node(Box::new(SyntaxNode::new(
+            let op_atom = self.create_atom(op_range, eterned::BaseCoword::new(op_str));
+            Ok(self.create_node(
                 SyntaxKind::UnaryOp,
                 range,
                 smallvec![
-                    Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                        op_range,
-                        eterned::BaseCoword::new(op_str),
-                    )),
+                    op_atom,
                     operand
                 ],
-            ))))
+            ))
         } else {
             // Parse primary expression then check for application
             self.app_term()
@@ -241,11 +240,11 @@ impl<'a> Parser<'a> {
             Ok(terms.into_iter().next().unwrap())
         } else {
             let range = self.input().range_from(start);
-            Ok(Syntax::Node(Box::new(SyntaxNode::new(
+            Ok(self.create_node(
                 SyntaxKind::App,
                 range,
                 terms.into(),
-            ))))
+            ))
         }
     }
 

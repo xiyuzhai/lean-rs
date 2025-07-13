@@ -57,6 +57,8 @@ fn test_simple_macro() {
                                 value: BaseCoword {
                                     data: "myMacro",
                                 },
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                         Atom(
@@ -76,6 +78,57 @@ fn test_simple_macro() {
                                 value: BaseCoword {
                                     data: "term",
                                 },
+                                leading_trivia: [
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 6,
+                                                offset: 5,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 7,
+                                                offset: 6,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 16,
+                                                offset: 15,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 17,
+                                                offset: 16,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 18,
+                                                offset: 17,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 19,
+                                                offset: 18,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                ],
+                                trailing_trivia: [],
                             },
                         ),
                         Node(
@@ -111,12 +164,18 @@ fn test_simple_macro() {
                                             value: BaseCoword {
                                                 data: "42",
                                             },
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                 ],
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                     ],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );
@@ -161,6 +220,8 @@ fn test_notation() {
                                 value: BaseCoword {
                                     data: "x ∈ S",
                                 },
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                         Node(
@@ -196,6 +257,57 @@ fn test_notation() {
                                             value: BaseCoword {
                                                 data: "Membership",
                                             },
+                                            leading_trivia: [
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 9,
+                                                            offset: 8,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 10,
+                                                            offset: 9,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 17,
+                                                            offset: 18,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 18,
+                                                            offset: 19,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 20,
+                                                            offset: 21,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 21,
+                                                            offset: 22,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                            ],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -215,6 +327,8 @@ fn test_notation() {
                                             value: BaseCoword {
                                                 data: "mem",
                                             },
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -234,6 +348,25 @@ fn test_notation() {
                                             value: BaseCoword {
                                                 data: "x",
                                             },
+                                            leading_trivia: [
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 35,
+                                                            offset: 36,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 36,
+                                                            offset: 37,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                            ],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -253,12 +386,35 @@ fn test_notation() {
                                             value: BaseCoword {
                                                 data: "S",
                                             },
+                                            leading_trivia: [
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 37,
+                                                            offset: 38,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 38,
+                                                            offset: 39,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                            ],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                 ],
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                     ],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );
@@ -311,6 +467,8 @@ fn test_macro_with_antiquotation() {
                                 value: BaseCoword {
                                     data: "double",
                                 },
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                         Node(
@@ -346,6 +504,41 @@ fn test_macro_with_antiquotation() {
                                             value: BaseCoword {
                                                 data: "x",
                                             },
+                                            leading_trivia: [
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 6,
+                                                            offset: 5,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 7,
+                                                            offset: 6,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 15,
+                                                            offset: 14,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 16,
+                                                            offset: 15,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                            ],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -365,9 +558,13 @@ fn test_macro_with_antiquotation() {
                                             value: BaseCoword {
                                                 data: "term",
                                             },
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                 ],
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                         Atom(
@@ -387,6 +584,41 @@ fn test_macro_with_antiquotation() {
                                 value: BaseCoword {
                                     data: "term",
                                 },
+                                leading_trivia: [
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 22,
+                                                offset: 21,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 23,
+                                                offset: 22,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 24,
+                                                offset: 23,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 25,
+                                                offset: 24,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                ],
+                                trailing_trivia: [],
                             },
                         ),
                         Node(
@@ -454,9 +686,46 @@ fn test_macro_with_antiquotation() {
                                                                     value: BaseCoword {
                                                                         data: "x",
                                                                     },
+                                                                    leading_trivia: [
+                                                                        Trivia {
+                                                                            kind: Whitespace,
+                                                                            range: SourceRange {
+                                                                                start: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 29,
+                                                                                    offset: 28,
+                                                                                },
+                                                                                end: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 30,
+                                                                                    offset: 29,
+                                                                                },
+                                                                            },
+                                                                            text: " ",
+                                                                        },
+                                                                        Trivia {
+                                                                            kind: Whitespace,
+                                                                            range: SourceRange {
+                                                                                start: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 32,
+                                                                                    offset: 31,
+                                                                                },
+                                                                                end: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 33,
+                                                                                    offset: 32,
+                                                                                },
+                                                                            },
+                                                                            text: " ",
+                                                                        },
+                                                                    ],
+                                                                    trailing_trivia: [],
                                                                 },
                                                             ),
                                                         ],
+                                                        leading_trivia: [],
+                                                        trailing_trivia: [],
                                                     },
                                                 ),
                                                 Atom(
@@ -476,6 +745,8 @@ fn test_macro_with_antiquotation() {
                                                         value: BaseCoword {
                                                             data: "+",
                                                         },
+                                                        leading_trivia: [],
+                                                        trailing_trivia: [],
                                                     },
                                                 ),
                                                 Node(
@@ -511,18 +782,61 @@ fn test_macro_with_antiquotation() {
                                                                     value: BaseCoword {
                                                                         data: "x",
                                                                     },
+                                                                    leading_trivia: [
+                                                                        Trivia {
+                                                                            kind: Whitespace,
+                                                                            range: SourceRange {
+                                                                                start: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 37,
+                                                                                    offset: 36,
+                                                                                },
+                                                                                end: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 38,
+                                                                                    offset: 37,
+                                                                                },
+                                                                            },
+                                                                            text: " ",
+                                                                        },
+                                                                        Trivia {
+                                                                            kind: Whitespace,
+                                                                            range: SourceRange {
+                                                                                start: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 39,
+                                                                                    offset: 38,
+                                                                                },
+                                                                                end: SourcePos {
+                                                                                    line: 1,
+                                                                                    column: 40,
+                                                                                    offset: 39,
+                                                                                },
+                                                                            },
+                                                                            text: " ",
+                                                                        },
+                                                                    ],
+                                                                    trailing_trivia: [],
                                                                 },
                                                             ),
                                                         ],
+                                                        leading_trivia: [],
+                                                        trailing_trivia: [],
                                                     },
                                                 ),
                                             ],
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                 ],
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                     ],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );

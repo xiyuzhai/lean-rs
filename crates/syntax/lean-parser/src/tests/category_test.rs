@@ -58,6 +58,25 @@ fn test_category_lambda() {
                                 value: BaseCoword {
                                     data: "x",
                                 },
+                                leading_trivia: [
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 2,
+                                                offset: 2,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 3,
+                                                offset: 3,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                ],
+                                trailing_trivia: [],
                             },
                         ),
                         Node(
@@ -93,6 +112,41 @@ fn test_category_lambda() {
                                             value: BaseCoword {
                                                 data: "x",
                                             },
+                                            leading_trivia: [
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 4,
+                                                            offset: 4,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 5,
+                                                            offset: 5,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                                Trivia {
+                                                    kind: Whitespace,
+                                                    range: SourceRange {
+                                                        start: SourcePos {
+                                                            line: 1,
+                                                            column: 7,
+                                                            offset: 7,
+                                                        },
+                                                        end: SourcePos {
+                                                            line: 1,
+                                                            column: 8,
+                                                            offset: 8,
+                                                        },
+                                                    },
+                                                    text: " ",
+                                                },
+                                            ],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -112,6 +166,8 @@ fn test_category_lambda() {
                                             value: BaseCoword {
                                                 data: "+",
                                             },
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                     Atom(
@@ -131,12 +187,18 @@ fn test_category_lambda() {
                                             value: BaseCoword {
                                                 data: "1",
                                             },
+                                            leading_trivia: [],
+                                            trailing_trivia: [],
                                         },
                                     ),
                                 ],
+                                leading_trivia: [],
+                                trailing_trivia: [],
                             },
                         ),
                     ],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );
@@ -181,9 +243,46 @@ fn test_category_error_message() {
                                 value: BaseCoword {
                                     data: "x",
                                 },
+                                leading_trivia: [
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 2,
+                                                offset: 2,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 3,
+                                                offset: 3,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                    Trivia {
+                                        kind: Whitespace,
+                                        range: SourceRange {
+                                            start: SourcePos {
+                                                line: 1,
+                                                column: 5,
+                                                offset: 5,
+                                            },
+                                            end: SourcePos {
+                                                line: 1,
+                                                column: 6,
+                                                offset: 6,
+                                            },
+                                        },
+                                        text: " ",
+                                    },
+                                ],
+                                trailing_trivia: [],
                             },
                         ),
                     ],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );

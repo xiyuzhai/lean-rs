@@ -399,9 +399,19 @@ impl<'a> Parser<'a> {
     fn take_leading_trivia(&mut self) -> Vec<Trivia> {
         std::mem::take(&mut self.leading_trivia)
     }
+    
+    /// Save the current leading trivia (for temporary preservation)
+    pub(crate) fn save_leading_trivia(&self) -> Vec<Trivia> {
+        self.leading_trivia.clone()
+    }
+    
+    /// Restore previously saved leading trivia
+    pub(crate) fn restore_leading_trivia(&mut self, trivia: Vec<Trivia>) {
+        self.leading_trivia = trivia;
+    }
 
     /// Create a syntax node with leading trivia attached
-    fn create_node(
+    pub(crate) fn create_node(
         &mut self,
         kind: lean_syn_expr::SyntaxKind,
         range: SourceRange,
@@ -414,7 +424,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Create a syntax atom with leading trivia attached
-    fn create_atom(&mut self, range: SourceRange, value: eterned::BaseCoword) -> Syntax {
+    pub(crate) fn create_atom(&mut self, range: SourceRange, value: eterned::BaseCoword) -> Syntax {
         let leading_trivia = self.take_leading_trivia();
         let mut atom = lean_syn_expr::SyntaxAtom::new(range, value);
         atom.leading_trivia = leading_trivia;

@@ -27,23 +27,17 @@ fn check_parse(input: &str, expected: Expect) {
 fn test_identifier() {
     check_parse(
         "hello",
-        expect![[
-            r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 6, offset: 5 } }, value: BaseCoword { data: "hello" } })"#
-        ]],
+        expect![[r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 6, offset: 5 } }, value: BaseCoword { data: "hello" }, leading_trivia: [], trailing_trivia: [] })"#]],
     );
 
     check_parse(
         "hello_world",
-        expect![[
-            r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 12, offset: 11 } }, value: BaseCoword { data: "hello_world" } })"#
-        ]],
+        expect![[r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 12, offset: 11 } }, value: BaseCoword { data: "hello_world" }, leading_trivia: [], trailing_trivia: [] })"#]],
     );
 
     check_parse(
         "x'",
-        expect![[
-            r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 3, offset: 2 } }, value: BaseCoword { data: "x'" } })"#
-        ]],
+        expect![[r#"Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 3, offset: 2 } }, value: BaseCoword { data: "x'" }, leading_trivia: [], trailing_trivia: [] })"#]],
     );
 }
 
@@ -52,12 +46,12 @@ fn test_identifier() {
 fn test_number() {
     let mut parser = Parser::new("42");
     let result = parser.number();
-    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 3, offset: 2 } }, value: BaseCoword { data: "42" } }))"#]]
+    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 3, offset: 2 } }, value: BaseCoword { data: "42" }, leading_trivia: [], trailing_trivia: [] }))"#]]
         .assert_eq(&format!("{result:?}"));
 
     let mut parser = Parser::new("3.14");
     let result = parser.number();
-    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 5, offset: 4 } }, value: BaseCoword { data: "3.14" } }))"#]]
+    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 5, offset: 4 } }, value: BaseCoword { data: "3.14" }, leading_trivia: [], trailing_trivia: [] }))"#]]
         .assert_eq(&format!("{result:?}"));
 }
 
@@ -66,12 +60,12 @@ fn test_number() {
 fn test_string_literal() {
     let mut parser = Parser::new(r#""hello world""#);
     let result = parser.string_literal();
-    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 14, offset: 13 } }, value: BaseCoword { data: "hello world" } }))"#]]
+    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 14, offset: 13 } }, value: BaseCoword { data: "hello world" }, leading_trivia: [], trailing_trivia: [] }))"#]]
         .assert_eq(&format!("{result:?}"));
 
     let mut parser = Parser::new(r#""hello\nworld""#);
     let result = parser.string_literal();
-    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 15, offset: 14 } }, value: BaseCoword { data: "hello\nworld" } }))"#]]
+    expect![[r#"Ok(Atom(SyntaxAtom { range: SourceRange { start: SourcePos { line: 1, column: 1, offset: 0 }, end: SourcePos { line: 1, column: 15, offset: 14 } }, value: BaseCoword { data: "hello\nworld" }, leading_trivia: [], trailing_trivia: [] }))"#]]
         .assert_eq(&format!("{result:?}"));
 }
 

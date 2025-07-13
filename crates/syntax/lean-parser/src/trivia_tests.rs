@@ -45,9 +45,8 @@ fn test_line_comment_preservation() {
 
 /// Test that block comments are preserved as trivia
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_block_comment_preservation() {
-    let input = "/* block comment */ hello";
+    let input = "/- block comment -/ hello";
     let mut parser = Parser::new(input);
 
     let result = parser.identifier().unwrap();
@@ -56,7 +55,7 @@ fn test_block_comment_preservation() {
         assert_eq!(atom.value.as_str(), "hello");
         assert_eq!(atom.leading_trivia.len(), 2); // comment + space
         assert_eq!(atom.leading_trivia[0].kind, TriviaKind::BlockComment);
-        assert_eq!(atom.leading_trivia[0].text, "/* block comment */");
+        assert_eq!(atom.leading_trivia[0].text, "/- block comment -/");
         assert_eq!(atom.leading_trivia[1].kind, TriviaKind::Whitespace);
         assert_eq!(atom.leading_trivia[1].text, " ");
     } else {
@@ -86,9 +85,8 @@ fn test_doc_comment_preservation() {
 
 /// Test mixed whitespace and comments
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_mixed_trivia_preservation() {
-    let input = "  \n-- comment\n  /* block */  hello";
+    let input = "  \n-- comment\n  /- block -/  hello";
     let mut parser = Parser::new(input);
 
     let result = parser.identifier().unwrap();
@@ -121,9 +119,8 @@ fn test_mixed_trivia_preservation() {
 
 /// Test that trivia is preserved in complex expressions
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_trivia_in_expressions() {
-    let input = "  /* comment */ def  hello : Nat := 42";
+    let input = "  /- comment -/ def  hello : Nat := 42";
     let mut parser = Parser::new(input);
 
     let result = parser.def_command().unwrap();
@@ -148,7 +145,6 @@ fn test_trivia_in_expressions() {
 
 /// Test that Unicode operators work with trivia preservation
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_unicode_operators_with_trivia() {
     let input = "  a ∈ b"; // Unicode set membership operator
     let mut parser = Parser::new(input);
@@ -156,13 +152,18 @@ fn test_unicode_operators_with_trivia() {
     let result = parser.term().unwrap();
 
     if let Syntax::Node(node) = result {
-        assert!(
-            !node.leading_trivia.is_empty(),
-            "Should have leading trivia"
-        );
-
         // Should parse as binary operation with ∈ operator
         assert_eq!(node.children.len(), 3); // a, ∈, b
+        
+        // Check that the first child (a) has the leading trivia
+        if let Some(Syntax::Atom(first_atom)) = node.children.get(0) {
+            assert!(
+                !first_atom.leading_trivia.is_empty(),
+                "First atom should have leading trivia"
+            );
+            assert_eq!(first_atom.leading_trivia[0].kind, TriviaKind::Whitespace);
+            assert_eq!(first_atom.leading_trivia[0].text, "  ");
+        }
 
         if let Some(Syntax::Atom(op_atom)) = node.children.get(1) {
             assert_eq!(op_atom.value.as_str(), "∈");
@@ -174,9 +175,8 @@ fn test_unicode_operators_with_trivia() {
 
 /// Test that trivia is preserved across multiple tokens
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_trivia_preservation_across_tokens() {
-    let input = "hello  /* comment */  world";
+    let input = "hello  /- comment -/  world";
     let mut parser = Parser::new(input);
 
     // Parse first identifier
@@ -228,7 +228,6 @@ fn test_no_trivia() {
 
 /// Test that trivia is correctly attached to syntax nodes
 #[test]
-#[ignore] // TODO: Fix trivia support
 fn test_trivia_attachment_to_nodes() {
     let input = "  \n-- Comment\ndef foo := 42";
     let mut parser = Parser::new(input);

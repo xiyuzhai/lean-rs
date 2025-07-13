@@ -37,6 +37,8 @@ fn test_empty_module() {
                         },
                     },
                     children: [],
+                    leading_trivia: [],
+                    trailing_trivia: [],
                 },
             )"#]],
     );

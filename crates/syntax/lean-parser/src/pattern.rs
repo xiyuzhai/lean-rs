@@ -1,4 +1,4 @@
-use lean_syn_expr::{Syntax, SyntaxKind, SyntaxNode};
+use lean_syn_expr::{Syntax, SyntaxKind};
 use smallvec::smallvec;
 
 use crate::{
@@ -64,19 +64,17 @@ impl<'a> Parser<'a> {
 
                 // Create infix pattern node
                 let range = self.input().range_from(start);
-                left = Syntax::Node(Box::new(SyntaxNode::new(
+                let op_atom = self.create_atom(op_range, eterned::BaseCoword::new(op_str));
+                left = self.create_node(
                     SyntaxKind::ConstructorPattern, /* Use constructor pattern for infix
                                                      * operators */
                     range,
                     smallvec![
-                        Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                            op_range,
-                            eterned::BaseCoword::new(op_str),
-                        )),
+                        op_atom,
                         left,
                         right
                     ],
-                )));
+                );
             } else {
                 break;
             }
@@ -117,11 +115,11 @@ impl<'a> Parser<'a> {
                     }
 
                     let range = self.input().range_from(start);
-                    Ok(Syntax::Node(Box::new(SyntaxNode::new(
+                    Ok(self.create_node(
                         SyntaxKind::ConstructorPattern,
                         range,
                         args.into(),
-                    ))))
+                    ))
                 } else {
                     // Variable pattern
                     Ok(ident)
@@ -182,11 +180,11 @@ impl<'a> Parser<'a> {
         self.expect_char('_')?;
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::WildcardPattern,
             range,
             smallvec![],
-        ))))
+        ))
     }
 
     /// Parse parenthesized pattern: `(pattern)`, unit pattern `()`, or tuple
@@ -202,25 +200,20 @@ impl<'a> Parser<'a> {
             let range = self.input().range_from(start);
 
             // Create a proper qualified identifier node for Unit.unit
-            let unit_atom = Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                range,
-                eterned::BaseCoword::new("Unit"),
-            ));
-            let unit_atom2 = Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                range,
-                eterned::BaseCoword::new("unit"),
-            ));
+            let unit_atom = self.create_atom(range, eterned::BaseCoword::new("Unit"));
+            let unit_atom2 = self.create_atom(range, eterned::BaseCoword::new("unit"));
 
-            return Ok(Syntax::Node(Box::new(SyntaxNode::new(
+            let unit_app = self.create_node(
+                SyntaxKind::App,
+                range,
+                vec![unit_atom, unit_atom2].into(),
+            );
+            
+            return Ok(self.create_node(
                 SyntaxKind::ConstructorPattern,
                 range,
-                vec![Syntax::Node(Box::new(SyntaxNode::new(
-                    SyntaxKind::App,
-                    range,
-                    vec![unit_atom, unit_atom2].into(),
-                )))]
-                .into(),
-            ))));
+                vec![unit_app].into(),
+            ));
         }
 
         // Parse first pattern
@@ -248,11 +241,11 @@ impl<'a> Parser<'a> {
             let range = self.input().range_from(start);
 
             // Create tuple pattern
-            return Ok(Syntax::Node(Box::new(SyntaxNode::new(
+            return Ok(self.create_node(
                 SyntaxKind::TuplePattern,
                 range,
                 elements.into(),
-            ))));
+            ));
         }
 
         // Single parenthesized pattern
@@ -288,15 +281,12 @@ impl<'a> Parser<'a> {
 
             // Empty list is represented as a constructor pattern with "List.nil" or just
             // "[]"
-            return Ok(Syntax::Node(Box::new(SyntaxNode::new(
+            let empty_list_atom = self.create_atom(range, eterned::BaseCoword::new("[]"));
+            return Ok(self.create_node(
                 SyntaxKind::ConstructorPattern,
                 range,
-                vec![Syntax::Atom(lean_syn_expr::SyntaxAtom::new(
-                    range,
-                    eterned::BaseCoword::new("[]"),
-                ))]
-                .into(),
-            ))));
+                vec![empty_list_atom].into(),
+            ));
         }
 
         // Parse elements
@@ -321,11 +311,11 @@ impl<'a> Parser<'a> {
         let range = self.input().range_from(start);
 
         // List patterns become constructor patterns
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::ConstructorPattern,
             range,
             elements.into(),
-        ))))
+        ))
     }
 
     /// Parse match expression: `match expr with | pat1 => expr1 | pat2 =>
@@ -363,11 +353,11 @@ impl<'a> Parser<'a> {
         let mut children = smallvec![expr];
         children.extend(arms);
 
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::Match,
             range,
             children,
-        ))))
+        ))
     }
 
     /// Parse a match arm: `pattern => expr` or `pattern if condition => expr`
@@ -406,10 +396,10 @@ impl<'a> Parser<'a> {
         children.push(expr);
 
         let range = self.input().range_from(start);
-        Ok(Syntax::Node(Box::new(SyntaxNode::new(
+        Ok(self.create_node(
             SyntaxKind::MatchArm,
             range,
             children,
-        ))))
+        ))
     }
 }
