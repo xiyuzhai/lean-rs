@@ -76,6 +76,10 @@ path = "../../../tests/integration/basic_metaprogramming_test.rs"
 name = "mathlib4_constructs_test"
 path = "../../../tests/integration/mathlib4_constructs_test.rs"
 
+[[test]]
+name = "module_imports_test"
+path = "../../../tests/integration/module_imports_test.rs"
+
 [dependencies]
 lean-parser = { path = "../../syntax/lean-parser" }
 lean-syn-expr = { path = "../../syntax/lean-syn-expr" }

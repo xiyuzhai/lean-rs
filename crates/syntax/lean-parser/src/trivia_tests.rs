@@ -156,7 +156,7 @@ fn test_unicode_operators_with_trivia() {
         assert_eq!(node.children.len(), 3); // a, ∈, b
         
         // Check that the first child (a) has the leading trivia
-        if let Some(Syntax::Atom(first_atom)) = node.children.get(0) {
+        if let Some(Syntax::Atom(first_atom)) = node.children.first() {
             assert!(
                 !first_atom.leading_trivia.is_empty(),
                 "First atom should have leading trivia"

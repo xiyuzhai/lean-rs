@@ -1,4 +1,4 @@
-use lean_syn_expr::{Syntax, SyntaxKind, SyntaxNode};
+use lean_syn_expr::{Syntax, SyntaxKind};
 use smallvec::smallvec;
 
 use crate::{

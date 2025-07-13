@@ -1,10 +1,9 @@
 #[cfg(test)]
 mod module_loader_integration_tests {
     use crate::{
-        environment_ext::init_basic_environment,
         module_loader::{ModuleLoader, ModuleLoaderConfig},
     };
-    use lean_kernel::Name;
+    use lean_kernel::{Environment, Name};
 
     #[test]
     fn test_module_loading_with_real_files() {
@@ -51,7 +50,7 @@ mod module_loader_integration_tests {
     }
 
     #[test]
-    #[ignore] // TODO: Fix elaboration of definitions in modules
+    #[ignore] // TODO: Fix namespace handling in module definitions
     fn test_module_elaboration_with_dependencies() {
         // Create module loader with test modules directory
         let mut config = ModuleLoaderConfig::default();
@@ -71,7 +70,7 @@ mod module_loader_integration_tests {
         config.search_paths.push(project_root.join("test/modules"));
 
         let loader = ModuleLoader::new(config.clone());
-        let base_env = init_basic_environment();
+        let base_env = Environment::new();
 
         // Elaborate Foo.Bar.Baz first
         let baz_name = Name::str(Name::str(Name::mk_simple("Foo"), "Bar"), "Baz");
