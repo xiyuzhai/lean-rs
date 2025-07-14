@@ -42,7 +42,7 @@ nom = "7.1"
 # Testing
 expect-test = "1.5"
 proptest = "1.4"
-criterion = "0.5"
+criterion = "0.6"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
