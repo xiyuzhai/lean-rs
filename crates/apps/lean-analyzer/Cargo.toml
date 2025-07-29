@@ -43,7 +43,7 @@ once_cell.workspace = true
 parking_lot.workspace = true
 
 # File system
-notify = "6.1"
+notify = "8.1"
 walkdir = "2.4"
 
 # String utilities
