@@ -9,6 +9,13 @@ if [ ! -d .git ]; then
     exit 1
 fi
 
+# Ensure git submodules are initialized
+if [ -f .gitmodules ]; then
+    echo "Ensuring git submodules are up-to-date..."
+    git submodule update --init --recursive
+    echo "✅ Submodules ready"
+fi
+
 # Create scripts directory if it doesn't exist
 mkdir -p scripts
 
@@ -29,6 +36,12 @@ cat > .git/hooks/pre-commit << 'EOF'
 set -e
 
 echo "Running pre-commit checks..."
+
+# Ensure submodules are initialized (required for some tests)
+if [ -f .gitmodules ]; then
+    echo "Ensuring git submodules are up-to-date..."
+    git submodule update --init --recursive
+fi
 
 # Check for unstaged changes
 if ! git diff --quiet; then
@@ -72,6 +85,12 @@ cat > .git/hooks/pre-push << 'EOF'
 set -e
 
 echo "Running pre-push checks..."
+
+# Ensure submodules are initialized (required for some tests)
+if [ -f .gitmodules ]; then
+    echo "Ensuring git submodules are up-to-date..."
+    git submodule update --init --recursive
+fi
 
 # Run cargo fmt check
 echo "Checking formatting..."

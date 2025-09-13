@@ -1,6 +1,6 @@
 # Makefile for lean-claude project
 
-.PHONY: all check fmt fmt-check clippy clippy-fix test test-quick build clean help install-hooks
+.PHONY: all check fmt fmt-check clippy clippy-fix test test-quick build clean help install-hooks submodules
 
 # Default target
 all: check
@@ -33,14 +33,24 @@ clippy-fix:
 	@cargo clippy --all-targets --all-features --fix --allow-dirty --allow-staged -- -D warnings
 	@echo "✅ Clippy fixes applied"
 
+# Ensure git submodules are initialized/updated
+submodules:
+	@if [ -f .gitmodules ]; then \
+		echo "Ensuring git submodules are up-to-date..."; \
+		git submodule update --init --recursive; \
+		echo "✅ Submodules ready"; \
+	else \
+		echo "No submodules configured"; \
+	fi
+
 # Run all tests
-test:
+test: submodules
 	@echo "Running all tests..."
 	@cargo test --all
 	@echo "✅ All tests passed"
 
 # Run tests quickly (no ignored tests, library code only)
-test-quick:
+test-quick: submodules
 	@echo "Running quick tests..."
 	@cargo test --lib --bins
 	@echo "✅ Quick tests passed"
