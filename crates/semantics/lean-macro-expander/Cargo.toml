@@ -7,7 +7,7 @@ edition = "2021"
 lean-syn-expr = { path = "../../syntax/lean-syn-expr" }
 lean-kernel = { path = "../lean-kernel" }
 eterned = { path = "../../abstractions/eterned" }
-thiserror = "1.0"
+thiserror = "2.0"
 im = "15.1"
 smallvec = "1.13"
 
