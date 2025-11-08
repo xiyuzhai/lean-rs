@@ -15,7 +15,7 @@ lean-elaborator = { path = "../../semantics/lean-elaborator" }
 lean-meta = { path = "../../semantics/lean-meta" }
 
 # LSP protocol support
-lsp-types = "0.94"
+lsp-types = "0.97"
 lsp-server = "0.7"
 tower-lsp = "0.20"
 
