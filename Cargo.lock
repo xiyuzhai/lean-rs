@@ -1079,6 +1079,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "lean-playground"
+version = "0.1.0"
+
+[[package]]
 name = "lean-syn-expr"
 version = "0.1.0"
 dependencies = [
