@@ -21,7 +21,7 @@ tower-lsp = "0.20"
 
 # Async runtime
 tokio = { version = "1.47", features = ["full"] }
-tower = "0.4"
+tower = "0.5"
 tower-service = "0.3"
 futures = "0.3"
 
