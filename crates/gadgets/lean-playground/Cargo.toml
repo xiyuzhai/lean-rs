@@ -7,3 +7,6 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+clap.workspace = true
+lean-parser = { path = "../../syntax/lean-parser" }
+lean-syn-expr = { path = "../../syntax/lean-syn-expr" }

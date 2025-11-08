@@ -435,6 +435,34 @@ impl<'a> Parser<'a> {
         let start = self.position();
         self.skip_whitespace(); // Collect leading trivia
 
+        // Check for guillemet-quoted identifier «...»
+        if self.peek() == Some('«') {
+            self.advance(); // consume «
+            let mut name = String::new();
+
+            loop {
+                match self.peek() {
+                    Some('»') => {
+                        self.advance(); // consume »
+                        break;
+                    }
+                    Some(ch) => {
+                        name.push(ch);
+                        self.advance();
+                    }
+                    None => {
+                        return Err(ParseError::boxed(
+                            ParseErrorKind::Expected("closing » for quoted identifier".to_string()),
+                            self.position(),
+                        ));
+                    }
+                }
+            }
+
+            let range = self.input().range_from(start);
+            return Ok(self.create_atom(range, eterned::BaseCoword::new(name)));
+        }
+
         if !self.peek().is_some_and(is_id_start) {
             return Err(ParseError::boxed(
                 ParseErrorKind::Expected("identifier".to_string()),

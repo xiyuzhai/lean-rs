@@ -189,3 +189,9 @@ help:
 
 save:
 	git-save origin
+
+run-all-theorem-names:
+	cargo run --bin lean-playground -- all-theorem-names ../mathlib4/Mathlib/InformationTheory/Hamming.lean
+
+run-compare-theorems:
+	cargo run --bin lean-playground -- compare-theorems test-data/playground/compare-theorems
