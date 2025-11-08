@@ -186,3 +186,6 @@ help:
 	@echo "  doc-open     - Generate and open documentation"
 	@echo "  ci           - Run CI checks"
 	@echo "  help         - Show this help message"
+
+save:
+	git-save origin

@@ -366,10 +366,8 @@ trait NameFromStr {
 }
 
 impl NameFromStr for Name {
-    fn from_str(_s: &str) -> Self {
-        // TODO: Implement proper name creation from string
-        // For now, return a placeholder
-        unsafe { std::mem::zeroed() }
+    fn from_str(s: &str) -> Self {
+        s.into()
     }
 }
 
