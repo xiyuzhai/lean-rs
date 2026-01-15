@@ -331,7 +331,7 @@ jobs:
         cargo llvm-cov --package lean-analyzer --lcov --output-path lcov.info
     
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         files: ./crates/apps/lean-analyzer/lcov.info
         directory: ./crates/apps/lean-analyzer/
